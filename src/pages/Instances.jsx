@@ -21,7 +21,8 @@ const instanceActions = [
 
 export default function Instances() {
   const { success, error: showError } = useToast();
-  const { data: instances = [], loading, error, retry, setData: setInstances } = useApi(() => instanceService.getAll(), []);
+  const { data, loading, error, retry, setData: setInstances } = useApi(() => instanceService.getAll(), []);
+  const instances = data ?? [];
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');

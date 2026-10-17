@@ -15,7 +15,8 @@ const actionOptions = ['ALL', 'LOGIN', 'LOGOUT', 'START_INSTANCE', 'STOP_INSTANC
 const userOptions = ['ALL', 'Admin User', 'Operator User', 'Viewer User', 'System', 'Sarah Chen', 'Mike Johnson'];
 
 export default function ActivityLogs() {
-  const { data: activities = [], loading, error, retry } = useApi(() => activityService.getAll(), []);
+  const { data, loading, error, retry } = useApi(() => activityService.getAll(), []);
+  const activities = data ?? [];
 
   const [search, setSearch] = useState('');
   const [userFilter, setUserFilter] = useState('ALL');

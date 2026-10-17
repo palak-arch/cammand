@@ -112,7 +112,8 @@ function AddUserModal({ onClose, onCreate }) {
 
 export default function Users() {
   const { success, error: showError } = useToast();
-  const { data: users = [], loading, error, retry, setData: setUsers } = useApi(() => userService.getAll(), []);
+  const { data, loading, error, retry, setData: setUsers } = useApi(() => userService.getAll(), []);
+  const users = data ?? [];
 
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');

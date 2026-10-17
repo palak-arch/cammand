@@ -14,7 +14,8 @@ import { alertService } from '../services/alertService';
 
 export default function Alerts() {
   const { success, error: showError } = useToast();
-  const { data: alerts = [], loading, error, retry, setData: setAlerts } = useApi(() => alertService.getAll(), []);
+  const { data, loading, error, retry, setData: setAlerts } = useApi(() => alertService.getAll(), []);
+  const alerts = data ?? [];
 
   const [search, setSearch] = useState('');
   const [severityFilter, setSeverityFilter] = useState('all');
