@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /instances
+Disallow: /monitoring
+Disallow: /alerts
+Disallow: /activity
+Disallow: /users
+Disallow: /settings
+Disallow: /auth/
+
+Sitemap: https://site-9d0ba7e1d9014c13b19727c1bbee8378.freebuff.page/sitemap.xml
