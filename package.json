@@ -10,7 +10,8 @@
     "lint": "oxlint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "tasks": "node scripts/tasks.mjs"
   },
   "dependencies": {
     "@freebuff/auth": "^0.1.0",
