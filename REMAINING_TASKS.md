@@ -36,6 +36,26 @@ handle anything marked "[agent]"._
       `VITE_USE_MOCK=false`; the frontend already routes every read/write
       through the service layer, so it plugs in without UI changes
 
+## 🚀 SEO & launch readiness (do after the basics above)
+
+- [ ] **Fast loading on real devices** — run a Lighthouse audit (mobile
+      preset) on the live preview and aim for Performance ≥ 90. The bundle
+      is already lean (~100 kB gz); re-check after any new pages or images.
+- [ ] **Works on mobile** — open the site on an actual phone (or Chrome
+      DevTools device mode): landing, login, dashboard, tables, and the
+      mobile sidebar must all be usable with no overlap or horizontal scroll.
+- [ ] **No broken links** — click every link on the public pages (nav,
+      footer, CTAs, auth links). [agent] can also add an automated
+      link-check script to CI so this never regresses.
+- [ ] **Post useful content** — add pages/posts that answer specific
+      questions your customers search for (e.g. "how to monitor EC2 CPU
+      usage", "EC2 cost monitoring checklist"). One genuinely helpful page
+      beats ten thin ones.
+- [ ] **SEO on every page** — unique `<title>` and `<meta name="description">`
+      per page with the keywords people actually search; one clear `<h1>`
+      per page; descriptive alt text on images. [agent] can audit
+      index.html and wire per-route document titles.
+
 ## 🔵 Nice-to-haves (agent can do anytime)
 
 - [ ] Error-path tests for Dashboard & Monitoring pages (hook-level covered;
