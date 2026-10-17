@@ -9,6 +9,8 @@ import EmptyState from '../components/common/EmptyState';
 import useApi from '../hooks/useApi';
 import { activityService } from '../services/activityService';
 
+const EMPTY_LIST = [];
+
 const ITEMS_PER_PAGE = 10;
 
 const actionOptions = ['ALL', 'LOGIN', 'LOGOUT', 'START_INSTANCE', 'STOP_INSTANCE', 'RESTART_INSTANCE', 'RESOLVE_ALERT', 'UPDATE_USER_ROLE', 'TRIGGER_ALERT', 'SCALE_UP', 'CREATE_SNAPSHOT', 'MODIFY_INSTANCE', 'BACKUP_COMPLETE', 'DEPLOY_APPLICATION', 'UPDATE_SECURITY_GROUP', 'VIEW_LOGS'];
@@ -16,7 +18,7 @@ const userOptions = ['ALL', 'Admin User', 'Operator User', 'Viewer User', 'Syste
 
 export default function ActivityLogs() {
   const { data, loading, error, retry } = useApi(() => activityService.getAll(), []);
-  const activities = data ?? [];
+  const activities = data ?? EMPTY_LIST;
 
   const [search, setSearch] = useState('');
   const [userFilter, setUserFilter] = useState('ALL');

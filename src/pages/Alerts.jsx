@@ -12,10 +12,12 @@ import useApi from '../hooks/useApi';
 import { useToast } from '../context/ToastContext';
 import { alertService } from '../services/alertService';
 
+const EMPTY_LIST = [];
+
 export default function Alerts() {
   const { success, error: showError } = useToast();
   const { data, loading, error, retry, setData: setAlerts } = useApi(() => alertService.getAll(), []);
-  const alerts = data ?? [];
+  const alerts = data ?? EMPTY_LIST;
 
   const [search, setSearch] = useState('');
   const [severityFilter, setSeverityFilter] = useState('all');

@@ -13,6 +13,8 @@ import { useToast } from '../context/ToastContext';
 import { instanceService } from '../services/instanceService';
 import { instanceTypes, regions } from '../data/mockInstances';
 
+const EMPTY_LIST = [];
+
 const instanceActions = [
   { key: 'start', label: 'Start', icon: Play, color: 'text-green-600 hover:bg-green-50' },
   { key: 'stop', label: 'Stop', icon: Square, color: 'text-amber-600 hover:bg-amber-50' },
@@ -22,7 +24,7 @@ const instanceActions = [
 export default function Instances() {
   const { success, error: showError } = useToast();
   const { data, loading, error, retry, setData: setInstances } = useApi(() => instanceService.getAll(), []);
-  const instances = data ?? [];
+  const instances = data ?? EMPTY_LIST;
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
