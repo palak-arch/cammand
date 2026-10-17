@@ -56,6 +56,41 @@ handle anything marked "[agent]"._
       per page; descriptive alt text on images. [agent] can audit
       index.html and wire per-route document titles.
 
+## 📚 Documentation pack (write these as files in /docs)
+
+- [ ] **docs/PRD.md** — product requirements: target users, core features,
+      success metrics, out-of-scope list
+- [ ] **docs/design.md** — design system: navy theme tokens, component
+      inventory, responsive rules, a11y standards
+- [ ] **docs/architecture.md** — system diagram: SPA → Worker (Sign in with
+      Freebuff) → service layer → mock data / real API, plus deploy flow
+- [ ] **docs/database.md** — data models: current mock shapes + planned D1
+      schema (users, instances, alerts, activities)
+- [ ] **docs/API.md** — the endpoint contract the services already call
+      (/auth, /ec2, /alerts, /monitoring, /users, /activities)
+- [ ] **docs/agents.md** — instructions for AI agents working in this repo:
+      commands, conventions, deploy/push flow, guardrails
+- [x] **README.md** — exists and is maintained (update as things change)
+
+## 🧩 Project process
+
+- [ ] **Project implementation plan** — turn the remaining work (backend,
+      content, SEO) into ordered milestones with dates
+- [ ] **Setup & initialisation** — verify a fresh clone works: `npm ci` →
+      `npm run dev` using only `.env.example` (no hidden local state)
+- [ ] **Feature development workflow** — move to branch → PR → CI green →
+      merge instead of pushing straight to main
+- [ ] **Authentication & security** — auth is live; next: security headers /
+      CSP on the Worker and a periodic dependency audit
+- [ ] **MCP connection** — set up an MCP server (e.g., GitHub) so agents can
+      manage issues, PRs and releases directly
+- [ ] **Integrations** — planned: real backend API, alert channels
+      (email/Slack), analytics (e.g., Plausible)
+- [ ] **Testing & QA** — extend coverage; add an end-to-end browser test
+      (Playwright) for login → dashboard → logout
+- [ ] **Debugging** — establish the workflow: error logging/monitoring
+      (e.g., Sentry), source maps in preview, bug-report checklist
+
 ## 🔵 Nice-to-haves (agent can do anytime)
 
 - [ ] Error-path tests for Dashboard & Monitoring pages (hook-level covered;
