@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy-900: #111827;
+  --color-navy-800: #1f2937;
+  --color-navy-700: #374151;
+  --color-navy-600: #4b5563;
+  --color-navy-500: #6b7280;
+  --color-navy-400: #9ca3af;
+  --color-navy-300: #d1d5db;
+  --color-navy-200: #e5e7eb;
+  --color-navy-100: #f3f4f6;
+  --color-navy-50: #f9fafb;
+  --color-accent: #111827;
+  --color-accent-light: #1f2937;
+  --color-accent-dark: #000000;
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-danger: #dc2626;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f3f4f6;
+  color: #111827;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-18px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Respect the user's motion preference: stop decorative float/ping animations. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-ping,
+  .animate-spin {
+    animation: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #e5e7eb;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
