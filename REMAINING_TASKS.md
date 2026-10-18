@@ -15,8 +15,10 @@ handle anything marked "[agent]"._
       confirm you land back on the requested page, then check your name and
       avatar in the sidebar, the "signed in as…" notice in **Settings**
       (Dismiss works), and **Sign Out** in the sidebar (a POST handled by the
-      Worker). This is the only unverified part of the auth flow — note the
-      live site runs the previous bundle until the agent redeploys.
+      Worker). This is the only unverified part of the auth flow — the
+      auth-cleanup build went live 2026-10-18 17:19 UTC (deploy receipt
+      succeeded; bundle sha256 matches the local build, so it runs today's
+      code).
 
 ## 🟡 Google Search Console (from today's session)
 
