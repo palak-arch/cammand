@@ -5,10 +5,10 @@ handle anything marked "[agent]"._
 
 ## 🔴 Tomorrow's must-dos
 
-- [ ] **Check the first CI run** — open the GitHub repo's **Actions** tab
-      (https://github.com/palak-arch/cammand/actions). Two pushes already
-      triggered runs (lint → test → build). Confirm they're green; if a run
-      failed, paste the log.
+- [x] **Check the first CI run** — ✅ verified 2026-10-18: run #7 on
+      commit `31ed575` (auth cleanup) completed with conclusion `success`
+      (lint → test → build) at https://github.com/palak-arch/cammand/actions
+      . Only the browser click-through below remains unverified.
 - [ ] **Browser click-through of the live preview** — open
       https://site-9d0ba7e1d9014c13b19727c1bbee8378.freebuff.page , click
       **Sign in with Freebuff** on the landing page, complete the sign-in,
