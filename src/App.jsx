@@ -1,14 +1,14 @@
 import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import AppLayout from './components/layout/AppLayout';
 import { AuthProvider, ProtectedRoute } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import LoadingSpinner from './components/common/LoadingSpinner';
-import Auth from './pages/Auth';
 import Landing from './pages/Landing';
+import { formatAuthReturnPath } from './utils/format';
 
 // Route-level code splitting keeps recharts (only used by Dashboard/Monitoring)
-// out of the landing/login bundle.
+// out of the landing bundle.
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Instances = lazy(() => import('./pages/Instances'));
 const Monitoring = lazy(() => import('./pages/Monitoring'));
@@ -26,6 +26,12 @@ function PageFallback() {
   );
 }
 
+/** Landing reads the signed-out bounce param (?authReturnTo=...) to restore the requested page. */
+function LandingRoute() {
+  const location = useLocation();
+  return <Landing authReturn={formatAuthReturnPath(location.search)} />;
+}
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -33,9 +39,7 @@ export default function App() {
         <ToastProvider>
           <Suspense fallback={<PageFallback />}>
             <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/login" element={<Auth mode="login" />} />
-              <Route path="/signup" element={<Auth mode="signup" />} />
+              <Route path="/" element={<LandingRoute />} />
 
               <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
                 <Route path="/dashboard" element={<Dashboard />} />

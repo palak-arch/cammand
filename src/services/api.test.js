@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 // Fake axios instance captured at module init so we can exercise the real
 // interceptor functions api.js registers — no network involved.
@@ -19,9 +19,7 @@ const { instance, requestHandlers, responseHandlers } = vi.hoisted(() => {
 vi.mock('axios', () => ({ default: { create: () => instance } }));
 
 import api from './api';
-import { saveSession, clearSession } from './session';
 
-const attachToken = requestHandlers[0];
 const { ok: unwrapData, err: normalizeError } = responseHandlers[0];
 
 async function caught(promise) {
@@ -34,23 +32,12 @@ async function caught(promise) {
 }
 
 describe('api client', () => {
-  beforeEach(() => {
-    clearSession();
-  });
-
   it('exports the configured axios instance', () => {
     expect(api).toBe(instance);
   });
 
-  it('attaches the bearer token when a session exists', () => {
-    saveSession({ token: 'tok-123', user: { email: 'a@b.c' } });
-    const config = attachToken({ headers: {} });
-    expect(config.headers.Authorization).toBe('Bearer tok-123');
-  });
-
-  it('does not set Authorization without a session', () => {
-    const config = attachToken({ headers: {} });
-    expect(config.headers.Authorization).toBeUndefined();
+  it('registers no request interceptor (the httpOnly cookie is sent automatically)', () => {
+    expect(requestHandlers).toHaveLength(0);
   });
 
   it('unwraps response data on success', () => {

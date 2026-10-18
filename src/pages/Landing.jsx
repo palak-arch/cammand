@@ -1,7 +1,10 @@
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { SignInWithFreebuff } from '@freebuff/auth/react';
 import { Cloud, Server, BarChart3, Bell, Shield, ArrowRight, Settings, Zap, Rocket, GitBranch, LifeBuoy, Activity, Clock } from 'lucide-react';
 import { floatingIcons } from '../utils/floatingIcons';
-import { CURRENT_YEAR } from '../utils/format';
+import { CURRENT_YEAR, AUTH_RETURN_PARAM } from '../utils/format';
+import { useAuth } from '../context/AuthContext';
 
 const features = [
   { icon: Server, title: 'Instance Management', description: 'Spin up, monitor, and control your EC2 instances from a single dashboard.' },
@@ -23,7 +26,42 @@ const steps = [
   { icon: LifeBuoy, title: 'Sleep easy', description: 'Get notified the moment something looks off, with the context you need to fix it before it affects users.' },
 ];
 
-export default function Landing() {
+function rememberReturn(path) {
+  try {
+    sessionStorage.setItem(AUTH_RETURN_PARAM, path);
+  } catch {
+    // Storage unavailable — sign-in still works, it just lands on "/".
+  }
+}
+
+function consumeReturn() {
+  try {
+    const stored = sessionStorage.getItem(AUTH_RETURN_PARAM);
+    sessionStorage.removeItem(AUTH_RETURN_PARAM);
+    return stored;
+  } catch {
+    return null;
+  }
+}
+
+export default function Landing({ authReturn }) {
+  const navigate = useNavigate();
+  const { user, loading } = useAuth();
+
+  // Remember which page a signed-out visitor asked for, so the sign-in round
+  // trip (which always returns to "/") can send them back there.
+  useEffect(() => {
+    if (authReturn) rememberReturn(authReturn);
+  }, [authReturn]);
+
+  // After signing in, the Worker drops the visitor back on "/" with no query:
+  // restore the remembered page exactly once, then clear the key.
+  useEffect(() => {
+    if (loading || !user) return;
+    const stored = consumeReturn();
+    if (stored && stored !== '/') navigate(stored, { replace: true });
+  }, [navigate, user, loading]);
+
   return (
     <div className="relative min-h-screen bg-white text-navy-900 overflow-x-hidden">
       <div className="fixed inset-0 pointer-events-none z-0">
@@ -48,9 +86,9 @@ export default function Landing() {
               <p className="text-[11px] text-navy-400 font-medium tracking-wide uppercase">Command Center</p>
             </div>
           </div>
-          <Link to="/signup" className="rounded-lg bg-navy-900 px-4 py-2 text-sm font-medium text-white hover:bg-navy-800 transition-colors shadow-sm">
+          <SignInWithFreebuff returnTo="/" className="rounded-lg bg-navy-900 px-4 py-2 text-sm font-medium text-white hover:bg-navy-800 transition-colors shadow-sm">
             Get Started
-          </Link>
+          </SignInWithFreebuff>
         </div>
       </header>
 
@@ -69,10 +107,10 @@ export default function Landing() {
             CloudOps gives your team real-time visibility into every instance, alert, and metric — so you can spot problems before your users do.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/signup" className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-8 py-3 text-sm font-medium text-white hover:bg-navy-800 transition-colors shadow-lg shadow-navy-900/20">
-              Start Free Trial
+            <SignInWithFreebuff returnTo="/" className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-8 py-3 text-sm font-medium text-white hover:bg-navy-800 transition-colors shadow-lg shadow-navy-900/20">
+              Sign in with Freebuff
               <ArrowRight size={16} />
-            </Link>
+            </SignInWithFreebuff>
             <a href="#features" className="inline-flex items-center gap-2 rounded-lg border border-navy-200 bg-white px-8 py-3 text-sm font-medium text-navy-700 hover:border-navy-900 hover:text-navy-900 transition-colors shadow-sm">
               Explore Features
             </a>
@@ -142,13 +180,13 @@ export default function Landing() {
             <h3 className="text-3xl lg:text-4xl font-bold tracking-tight text-white">Ready to take control of your cloud?</h3>
             <p className="mt-4 max-w-xl mx-auto text-navy-200">Join thousands of engineers managing their infrastructure with CloudOps. Free for small teams.</p>
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link to="/signup" className="inline-flex items-center gap-2 rounded-lg bg-white px-8 py-3 text-sm font-medium text-navy-900 hover:bg-navy-100 transition-colors shadow-lg">
+              <SignInWithFreebuff returnTo="/" className="inline-flex items-center gap-2 rounded-lg bg-white px-8 py-3 text-sm font-medium text-navy-900 hover:bg-navy-100 transition-colors shadow-lg">
                 Start Free Trial
                 <ArrowRight size={16} />
-              </Link>
-              <Link to="/login" className="inline-flex items-center gap-2 rounded-lg border border-navy-400 px-8 py-3 text-sm font-medium text-white hover:bg-white/10 transition-colors">
+              </SignInWithFreebuff>
+              <SignInWithFreebuff returnTo="/" className="inline-flex items-center gap-2 rounded-lg border border-navy-400 px-8 py-3 text-sm font-medium text-white hover:bg-white/10 transition-colors">
                 Sign In
-              </Link>
+              </SignInWithFreebuff>
             </div>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-6 text-xs text-navy-300">
               <span className="flex items-center gap-1.5"><Clock size={14} /> Set up in under 10 minutes</span>

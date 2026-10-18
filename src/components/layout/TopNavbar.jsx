@@ -2,6 +2,7 @@ import { useLocation } from 'react-router-dom';
 import { Search, Bell, Menu } from 'lucide-react';
 
 import { useAuth } from '../../context/AuthContext';
+import UserAvatar from '../common/UserAvatar';
 
 const pageTitles = {
   '/dashboard': 'Dashboard',
@@ -19,13 +20,6 @@ export default function TopNavbar({ onMenuClick }) {
   const title = pageTitles[location.pathname] || 'CloudOps';
 
   const displayName = user?.name || user?.email || 'Unknown User';
-  const initials = displayName
-    .split(' ')
-    .map((word) => word[0])
-    .filter(Boolean)
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
 
   return (
     <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-navy-200">
@@ -39,7 +33,8 @@ export default function TopNavbar({ onMenuClick }) {
           >
             <Menu size={20} />
           </button>
-          <h2 className="text-lg font-semibold text-navy-900">{title}</h2>
+          {/* Not a heading: each page owns its single <h1> via PageHeader. */}
+          <p className="text-lg font-semibold text-navy-900">{title}</p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -64,12 +59,10 @@ export default function TopNavbar({ onMenuClick }) {
           </button>
 
           <div className="hidden sm:flex items-center gap-2 pl-3 border-l border-navy-200">
-            <div className="w-8 h-8 rounded-full bg-navy-900 flex items-center justify-center text-white text-xs font-semibold">
-              {initials}
-            </div>
+            <UserAvatar user={user} className="h-8 w-8 text-xs" />
             <div className="hidden md:block">
               <p className="text-sm font-medium text-navy-900 leading-tight">{displayName}</p>
-              <p className="text-xs text-navy-500 leading-tight">{user?.role || 'Not signed in'}</p>
+              <p className="text-xs text-navy-500 leading-tight">{user?.email || 'Not signed in'}</p>
             </div>
           </div>
         </div>

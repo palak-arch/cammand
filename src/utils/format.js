@@ -15,3 +15,25 @@ export function timeAgo(timestamp) {
   if (hours > 0) return `${hours}h ago`;
   return `${minutes}m ago`;
 }
+
+/** Query param that carries the page a signed-out visitor asked for. */
+export const AUTH_RETURN_PARAM = 'authReturnTo';
+
+/**
+ * Validates the page requested via ?authReturnTo= when bouncing home.
+ * Only same-site absolute paths may round-trip — never `//host` or a
+ * scheme — so a crafted link can't bounce visitors off-site after sign-in.
+ * Returns null when there is nothing to restore.
+ */
+export function formatAuthReturnPath(search) {
+  const raw = new URLSearchParams(search).get(AUTH_RETURN_PARAM);
+  if (raw && raw.startsWith('/') && !raw.startsWith('//')) return raw;
+  return null;
+}
+
+/** "?authReturnTo=..." for the landing bounce; empty at the landing page itself. */
+export function authReturnQuery(location) {
+  const path = `${location.pathname}${location.search}`;
+  if (!path || path === '/') return '';
+  return `?${AUTH_RETURN_PARAM}=${encodeURIComponent(path)}`;
+}

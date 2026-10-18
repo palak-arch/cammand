@@ -3,6 +3,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import MetricCard from '../components/common/MetricCard';
 import HealthIndicator from '../components/common/HealthIndicator';
 import ChartCard from '../components/common/ChartCard';
+import PageHeader from '../components/common/PageHeader';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorState from '../components/common/ErrorState';
 import useApi from '../hooks/useApi';
@@ -78,24 +79,16 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8">
-      {/* Hero Header */}
-      <div className="relative overflow-hidden rounded-2xl border border-navy-200 bg-white shadow-sm p-6 lg:p-8">
-        <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-navy-900/5 blur-3xl" />
-        <div className="absolute -bottom-16 -left-16 w-32 h-32 rounded-full bg-green-500/5 blur-2xl" />
-        <div className="relative">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="flex items-center gap-1.5 rounded-full bg-green-50 ring-1 ring-green-200 px-2.5 py-1 text-xs font-medium text-green-700">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 bg-green-500" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-500" />
-              </span>
-              Systems Operational
-            </span>
-          </div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-navy-900 tracking-tight">CloudOps Command Center</h1>
-          <p className="mt-1.5 text-sm text-navy-500 max-w-xl">Centralized infrastructure monitoring and cloud operations across all regions.</p>
-        </div>
-      </div>
+      {/* The single page-level heading (h1) — every page owns exactly one via PageHeader. */}
+      <PageHeader title="Dashboard" subtitle="Centralized infrastructure monitoring and cloud operations across all regions.">
+        <span className="flex items-center gap-1.5 rounded-full bg-green-50 ring-1 ring-green-200 px-2.5 py-1 text-xs font-medium text-green-700">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 bg-green-500" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-500" />
+          </span>
+          Systems Operational
+        </span>
+      </PageHeader>
 
       {/* Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">

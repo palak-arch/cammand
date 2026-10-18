@@ -5,7 +5,7 @@ let auth;
 let wrappedApp;
 
 // CloudOps is a static SPA. Navigation requests with no matching file fall
-// back to index.html so deep links like /login and /dashboard work.
+// back to index.html so deep links like /dashboard and /instances work.
 async function serveAssets(request, env) {
   const response = await env.ASSETS.fetch(request);
   const acceptsHtml = (request.headers.get('Accept') || '').includes('text/html');

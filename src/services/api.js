@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { API_BASE_URL } from './config';
-import { getToken } from './session';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -10,11 +9,9 @@ const api = axios.create({
   },
 });
 
-api.interceptors.request.use((config) => {
-  const token = getToken();
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
+// No Authorization header here: the session cookie is httpOnly and owned by
+// the Worker; the browser never holds a token to attach (when a real API is
+// wired up, it must share the Worker's session cookie instead).
 
 function toError(error) {
   if (error?.response) {

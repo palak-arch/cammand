@@ -1,8 +1,9 @@
-import { useNavigate } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
+import { SignOutButton } from '@freebuff/auth/react';
 import { LayoutDashboard, Server, BarChart3, Bell, ClipboardList, Users, Settings, LogOut, Cloud, X, ChevronRight } from 'lucide-react';
 
 import { useAuth } from '../../context/AuthContext';
+import UserAvatar from '../common/UserAvatar';
 
 const navSections = [
   {
@@ -35,25 +36,11 @@ const navSections = [
 ];
 
 export default function MobileSidebar({ isOpen, onClose }) {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
 
   if (!isOpen) return null;
 
   const displayName = user?.name || user?.email || 'Unknown User';
-  const initials = displayName
-    .split(' ')
-    .map((word) => word[0])
-    .filter(Boolean)
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
-
-  const handleLogout = () => {
-    logout();
-    onClose();
-    navigate('/login', { replace: true });
-  };
 
   return (
     <div className="fixed inset-0 z-50 lg:hidden">
@@ -121,24 +108,22 @@ export default function MobileSidebar({ isOpen, onClose }) {
           <div className="rounded-2xl bg-navy-50 border border-navy-100 p-5">
             <div className="flex items-center gap-4">
               <div className="relative">
-                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-navy-800 to-navy-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
-                  {initials}
-                </div>
+                <UserAvatar user={user} className="h-11 w-11 text-sm" />
                 <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-green-500 border-2 border-white" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-navy-900 truncate">{displayName}</p>
-                <p className="text-xs text-navy-500 truncate">{user?.role || 'Not signed in'}</p>
+                <p className="text-xs text-navy-500 truncate">{user?.email || 'Not signed in'}</p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={handleLogout}
+            {/* Sign-out must be a POST handled by the Worker — a plain link would let other sites sign visitors out. */}
+            <SignOutButton
+              returnTo="/"
               className="mt-4 w-full flex items-center justify-center gap-2.5 rounded-xl border border-navy-200 bg-white px-4 py-2.5 text-sm font-medium text-navy-600 hover:bg-navy-900 hover:text-white hover:border-navy-900 transition-all duration-200 shadow-sm"
             >
               <LogOut size={16} aria-hidden="true" />
               Sign Out
-            </button>
+            </SignOutButton>
           </div>
         </div>
       </aside>

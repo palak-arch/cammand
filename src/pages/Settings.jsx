@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Save, User, Bell, AlertTriangle, Clock, Globe, Shield } from 'lucide-react';
+import { Save, User, Bell, AlertTriangle, Clock, Globe, Shield, CheckCircle, X } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
+import UserAvatar from '../components/common/UserAvatar';
 import { Field, Toggle, inputClass, selectClass } from '../components/common/Field';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -50,17 +51,13 @@ export default function Settings() {
   const { user } = useAuth();
   const { success } = useToast();
 
-  const [profile, setProfile] = useState({
-    name: user?.name || 'Admin User',
-    email: user?.email || 'admin@cloudops.io',
-  });
+  const [noticeDismissed, setNoticeDismissed] = useState(false);
   const [savedSettings] = useState(loadSettings);
   const [notifications, setNotifications] = useState(savedSettings.notifications);
   const [alertPrefs, setAlertPrefs] = useState(savedSettings.alertPrefs);
   const [refreshInterval, setRefreshInterval] = useState(savedSettings.refreshInterval);
   const [defaultRegion, setDefaultRegion] = useState(savedSettings.defaultRegion);
   const [security, setSecurity] = useState(savedSettings.security);
-  const [currentPassword, setCurrentPassword] = useState('');
   const [saved, setSaved] = useState(false);
 
   const handleSave = () => {
@@ -84,14 +81,40 @@ export default function Settings() {
       <PageHeader title="Settings" subtitle="Configure your CloudOps Command Center preferences" />
 
       <div className="space-y-6">
+        {user && !noticeDismissed && (
+          <div
+            role="status"
+            className="flex items-start justify-between gap-4 rounded-xl border border-green-200 bg-green-50 p-4"
+          >
+            <div className="flex items-start gap-3">
+              <CheckCircle size={18} className="mt-0.5 shrink-0 text-green-600" aria-hidden="true" />
+              <div>
+                <p className="text-sm font-medium text-green-900">You’re signed in as {user.email}.</p>
+                <p className="mt-0.5 text-xs text-green-700">
+                  Your name and avatar come from your Freebuff profile — CloudOps keeps no password for you.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setNoticeDismissed(true)}
+              aria-label="Dismiss sign-in notice"
+              className="rounded-lg p-1 text-green-700 hover:bg-green-100 hover:text-green-900 transition-colors"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        )}
+
         <SettingsSection icon={User} title="Profile Settings">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Field label="Full Name" htmlFor="settings-name">
-              <input id="settings-name" type="text" value={profile.name} onChange={(e) => setProfile({ ...profile, name: e.target.value })} className={inputClass} />
-            </Field>
-            <Field label="Email Address" htmlFor="settings-email">
-              <input id="settings-email" type="email" value={profile.email} onChange={(e) => setProfile({ ...profile, email: e.target.value })} className={inputClass} />
-            </Field>
+          {/* Read-only: identity belongs to the Freebuff profile, not to this app. */}
+          <div className="flex items-center gap-4">
+            <UserAvatar user={user} className="h-12 w-12 text-sm" />
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-navy-900 truncate">{user?.name}</p>
+              <p className="text-xs text-navy-500 truncate">{user?.email}</p>
+              <p className="mt-1 text-[11px] text-navy-400">Managed by your Freebuff profile.</p>
+            </div>
           </div>
         </SettingsSection>
 
@@ -141,19 +164,9 @@ export default function Settings() {
         <SettingsSection icon={Shield} title="Security Settings">
           <Toggle id="security-2fa" enabled={security.twoFactor} onChange={(v) => setSecurity({ ...security, twoFactor: v })} label="Two-Factor Authentication" description="Add an extra layer of security to your account" />
           <Toggle id="security-timeout" enabled={security.sessionTimeout} onChange={(v) => setSecurity({ ...security, sessionTimeout: v })} label="Session Timeout" description="Auto-logout after 30 minutes of inactivity" />
-          <div className="mt-3">
-            <Field label="Current Password" htmlFor="settings-password">
-              <input
-                id="settings-password"
-                type="password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                autoComplete="current-password"
-                placeholder="Enter your password to confirm changes"
-                className={inputClass}
-              />
-            </Field>
-          </div>
+          <p className="mt-3 text-xs text-navy-500">
+            Sign-in, passwords and sessions are handled by Freebuff — this app never sees or stores them.
+          </p>
         </SettingsSection>
 
         <div className="flex items-center gap-4">

@@ -1,6 +1,6 @@
 # Remaining Tasks
 
-_Last updated: 2026-10-17. Check items off as you finish; ask the agent to
+_Last updated: 2026-10-18. Check items off as you finish; ask the agent to
 handle anything marked "[agent]"._
 
 ## 🔴 Tomorrow's must-dos
@@ -11,9 +11,12 @@ handle anything marked "[agent]"._
       failed, paste the log.
 - [ ] **Browser click-through of the live preview** — open
       https://site-9d0ba7e1d9014c13b19727c1bbee8378.freebuff.page , click
-      **Sign in with Freebuff**, complete the sign-in, confirm your name
-      appears in the sidebar and the dashboard loads, then **Sign Out** from
-      the sidebar. This is the only unverified part of the auth flow.
+      **Sign in with Freebuff** on the landing page, complete the sign-in,
+      confirm you land back on the requested page, then check your name and
+      avatar in the sidebar, the "signed in as…" notice in **Settings**
+      (Dismiss works), and **Sign Out** in the sidebar (a POST handled by the
+      Worker). This is the only unverified part of the auth flow — note the
+      live site runs the previous bundle until the agent redeploys.
 
 ## 🟡 Google Search Console (from today's session)
 
@@ -80,8 +83,11 @@ handle anything marked "[agent]"._
       `npm run dev` using only `.env.example` (no hidden local state)
 - [ ] **Feature development workflow** — move to branch → PR → CI green →
       merge instead of pushing straight to main
-- [ ] **Authentication & security** — auth is live; next: security headers /
-      CSP on the Worker and a periodic dependency audit
+- [ ] **Authentication & security** — auth cleanup done 2026-10-18
+      (Freebuff-only: password form, demo login and local session storage
+      removed; single h1 per page; sign-in returnTo round trip tested).
+      Next: security headers / CSP on the Worker and a periodic dependency
+      audit
 - [ ] **MCP connection** — set up an MCP server (e.g., GitHub) so agents can
       manage issues, PRs and releases directly
 - [ ] **Integrations** — planned: real backend API, alert channels

@@ -1,82 +1,33 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { Loader2 } from 'lucide-react';
-import { authService, platformAuth } from '../services/authService';
-import { getSession } from '../services/session';
-import { usePlatformAuth } from '../services/config';
+import { useFreebuffUser } from '@freebuff/auth/react';
+
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import { authReturnQuery } from '../utils/format';
 
 const AuthContext = createContext(null);
 
+/**
+ * Reads the signed-in visitor from the site's own /auth/freebuff/session
+ * (served by the Worker from its httpOnly cookie). The browser never sees
+ * or decodes tokens — this user object is for display only; the server
+ * decides access on every protected route and API call.
+ */
 export function AuthProvider({ children }) {
-  // Platform mode: the session lives in an httpOnly cookie owned by the
-  // Worker; we verify it once on mount. Demo mode keeps localStorage.
-  const [session, setSession] = useState(() => (usePlatformAuth ? null : getSession()));
-  const [status, setStatus] = useState(usePlatformAuth ? 'loading' : 'ready');
+  const { user: freebuffUser, isLoading } = useFreebuffUser();
 
-  useEffect(() => {
-    if (!usePlatformAuth) return undefined;
-    let active = true;
-    platformAuth
-      .getSession()
-      .then((next) => {
-        if (active) {
-          setSession(next);
-          setStatus('ready');
-        }
-      })
-      .catch(() => {
-        if (active) {
-          setSession(null);
-          setStatus('ready');
-        }
-      });
-    return () => {
-      active = false;
+  // Session surface for the UI: signed-out visitors get null.
+  const user = useMemo(() => {
+    if (!freebuffUser) return null;
+    return {
+      name: freebuffUser.name || 'CloudOps user',
+      email: freebuffUser.email || '',
+      avatarUrl: freebuffUser.picture || null,
+      signedIn: true,
     };
-  }, []);
+  }, [freebuffUser]);
 
-  const login = useCallback(async (credentials) => {
-    if (usePlatformAuth) {
-      platformAuth.signIn('/dashboard');
-      return null;
-    }
-    const next = await authService.login(credentials);
-    setSession(next);
-    return next;
-  }, []);
-
-  const signup = useCallback(async (values) => {
-    if (usePlatformAuth) {
-      platformAuth.signIn('/dashboard');
-      return null;
-    }
-    const next = await authService.signup(values);
-    setSession(next);
-    return next;
-  }, []);
-
-  const logout = useCallback(() => {
-    if (usePlatformAuth) {
-      platformAuth.signOut();
-      return;
-    }
-    authService.logout();
-    setSession(null);
-  }, []);
-
-  const value = useMemo(
-    () => ({
-      user: session?.user ?? null,
-      isAuthenticated: Boolean(session),
-      // 'loading' while a platform session is being verified; 'ready' in demo mode.
-      status,
-      mode: usePlatformAuth ? 'platform' : 'demo',
-      login,
-      signup,
-      logout,
-    }),
-    [session, status, login, signup, logout]
-  );
+  const value = useMemo(() => ({ user, loading: isLoading }), [user, isLoading]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
@@ -87,23 +38,21 @@ export function useAuth() {
   return context;
 }
 
-/** Redirects signed-out visitors to /login, remembering where they wanted to go. */
+/**
+ * Signed-out visitors go back to the landing page; the authReturnTo query
+ * param remembers which page they wanted so sign-in can return them there.
+ */
 export function ProtectedRoute({ children }) {
-  const { isAuthenticated, status } = useAuth();
+  const { user, loading } = useAuth();
   const location = useLocation();
 
-  // A platform session is verified server-side before deciding; don't flash
-  // the login page while that check is in flight.
-  if (status === 'loading') {
-    return (
-      <div className="flex justify-center py-24" role="status" aria-label="Checking your session">
-        <Loader2 size={24} className="animate-spin text-navy-700" />
-      </div>
-    );
+  // Don't flash the landing page while the session check is in flight.
+  if (loading) {
+    return <LoadingSpinner text="Checking your session..." />;
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />;
+  if (!user) {
+    return <Navigate to={`/${authReturnQuery(location)}`} replace />;
   }
   return children;
 }
