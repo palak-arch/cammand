@@ -5,14 +5,4 @@
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-  <url>
-    <loc>https://site-9d0ba7e1d9014c13b19727c1bbee8378.freebuff.page/login</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://site-9d0ba7e1d9014c13b19727c1bbee8378.freebuff.page/signup</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
 </urlset>
