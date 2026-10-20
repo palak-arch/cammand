@@ -4,6 +4,7 @@ import { SignInWithFreebuff } from '@freebuff/auth/react';
 import { Cloud, Server, BarChart3, Bell, Shield, ArrowRight, Settings, Zap, Rocket, GitBranch, LifeBuoy, Activity, Clock } from 'lucide-react';
 import { floatingIcons } from '../utils/floatingIcons';
 import { CURRENT_YEAR, AUTH_RETURN_PARAM } from '../utils/format';
+import { DEMO_MODE } from '../utils/demoMode';
 import { useAuth } from '../context/AuthContext';
 
 const features = [
@@ -42,6 +43,26 @@ function consumeReturn() {
   } catch {
     return null;
   }
+}
+
+/**
+ * Sign-in is a link to the Worker's /auth/freebuff/signin route, which only
+ * exists when a Worker is running. Plain `vite dev` has none, so there these
+ * controls open the demo app instead of falling through to the not-found page.
+ */
+function SignInControl({ className, children }) {
+  if (DEMO_MODE) {
+    return (
+      <Link to="/dashboard" className={className}>
+        {children}
+      </Link>
+    );
+  }
+  return (
+    <SignInWithFreebuff returnTo="/" className={className}>
+      {children}
+    </SignInWithFreebuff>
+  );
 }
 
 export default function Landing({ authReturn }) {
@@ -86,9 +107,9 @@ export default function Landing({ authReturn }) {
               <p className="text-[11px] text-navy-400 font-medium tracking-wide uppercase">Command Center</p>
             </div>
           </div>
-          <SignInWithFreebuff returnTo="/" className="rounded-lg bg-navy-900 px-4 py-2 text-sm font-medium text-white hover:bg-navy-800 transition-colors shadow-sm">
+          <SignInControl className="rounded-lg bg-navy-900 px-4 py-2 text-sm font-medium text-white hover:bg-navy-800 transition-colors shadow-sm">
             Get Started
-          </SignInWithFreebuff>
+          </SignInControl>
         </div>
       </header>
 
@@ -107,10 +128,10 @@ export default function Landing({ authReturn }) {
             CloudOps gives your team real-time visibility into every instance, alert, and metric — so you can spot problems before your users do.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <SignInWithFreebuff returnTo="/" className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-8 py-3 text-sm font-medium text-white hover:bg-navy-800 transition-colors shadow-lg shadow-navy-900/20">
+            <SignInControl className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-8 py-3 text-sm font-medium text-white hover:bg-navy-800 transition-colors shadow-lg shadow-navy-900/20">
               Sign in with Freebuff
               <ArrowRight size={16} />
-            </SignInWithFreebuff>
+            </SignInControl>
             <a href="#features" className="inline-flex items-center gap-2 rounded-lg border border-navy-200 bg-white px-8 py-3 text-sm font-medium text-navy-700 hover:border-navy-900 hover:text-navy-900 transition-colors shadow-sm">
               Explore Features
             </a>
@@ -180,13 +201,13 @@ export default function Landing({ authReturn }) {
             <h3 className="text-3xl lg:text-4xl font-bold tracking-tight text-white">Ready to take control of your cloud?</h3>
             <p className="mt-4 max-w-xl mx-auto text-navy-200">Join thousands of engineers managing their infrastructure with CloudOps. Free for small teams.</p>
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <SignInWithFreebuff returnTo="/" className="inline-flex items-center gap-2 rounded-lg bg-white px-8 py-3 text-sm font-medium text-navy-900 hover:bg-navy-100 transition-colors shadow-lg">
+              <SignInControl className="inline-flex items-center gap-2 rounded-lg bg-white px-8 py-3 text-sm font-medium text-navy-900 hover:bg-navy-100 transition-colors shadow-lg">
                 Start Free Trial
                 <ArrowRight size={16} />
-              </SignInWithFreebuff>
-              <SignInWithFreebuff returnTo="/" className="inline-flex items-center gap-2 rounded-lg border border-navy-400 px-8 py-3 text-sm font-medium text-white hover:bg-white/10 transition-colors">
+              </SignInControl>
+              <SignInControl className="inline-flex items-center gap-2 rounded-lg border border-navy-400 px-8 py-3 text-sm font-medium text-white hover:bg-white/10 transition-colors">
                 Sign In
-              </SignInWithFreebuff>
+              </SignInControl>
             </div>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-6 text-xs text-navy-300">
               <span className="flex items-center gap-1.5"><Clock size={14} /> Set up in under 10 minutes</span>

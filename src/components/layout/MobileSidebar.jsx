@@ -1,8 +1,9 @@
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { SignOutButton } from '@freebuff/auth/react';
 import { LayoutDashboard, Server, BarChart3, Bell, ClipboardList, Users, Settings, LogOut, Cloud, X, ChevronRight } from 'lucide-react';
 
 import { useAuth } from '../../context/AuthContext';
+import { DEMO_MODE } from '../../utils/demoMode';
 import UserAvatar from '../common/UserAvatar';
 
 const navSections = [
@@ -117,14 +118,25 @@ export default function MobileSidebar({ isOpen, onClose }) {
                 <p className="text-xs text-navy-500 truncate">{user?.email || 'Not signed in'}</p>
               </div>
             </div>
-            {/* Sign-out must be a POST handled by the Worker — a plain link would let other sites sign visitors out. */}
-            <SignOutButton
-              returnTo="/"
-              className="mt-4 w-full flex items-center justify-center gap-2.5 rounded-xl border border-navy-200 bg-white px-4 py-2.5 text-sm font-medium text-navy-600 hover:bg-navy-900 hover:text-white hover:border-navy-900 transition-all duration-200 shadow-sm"
-            >
-              <LogOut size={16} aria-hidden="true" />
-              Sign Out
-            </SignOutButton>
+            {/* Sign-out must be a POST handled by the Worker — a plain link would let other sites sign visitors out. In demo mode (plain `vite dev`, no Worker) there is no session to end, so the control leaves the demo instead of posting to a route that does not exist. */}
+            {DEMO_MODE ? (
+              <Link
+                to="/"
+                onClick={onClose}
+                className="mt-4 w-full flex items-center justify-center gap-2.5 rounded-xl border border-navy-200 bg-white px-4 py-2.5 text-sm font-medium text-navy-600 hover:bg-navy-900 hover:text-white hover:border-navy-900 transition-all duration-200 shadow-sm"
+              >
+                <LogOut size={16} aria-hidden="true" />
+                Exit demo
+              </Link>
+            ) : (
+              <SignOutButton
+                returnTo="/"
+                className="mt-4 w-full flex items-center justify-center gap-2.5 rounded-xl border border-navy-200 bg-white px-4 py-2.5 text-sm font-medium text-navy-600 hover:bg-navy-900 hover:text-white hover:border-navy-900 transition-all duration-200 shadow-sm"
+              >
+                <LogOut size={16} aria-hidden="true" />
+                Sign Out
+              </SignOutButton>
+            )}
           </div>
         </div>
       </aside>

@@ -6,6 +6,7 @@ import { ToastProvider } from './context/ToastContext';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import Landing from './pages/Landing';
 import { formatAuthReturnPath } from './utils/format';
+import { DEMO_MODE } from './utils/demoMode';
 
 // Route-level code splitting keeps recharts (only used by Dashboard/Monitoring)
 // out of the landing bundle.
@@ -50,6 +51,15 @@ export default function App() {
                 <Route path="/users" element={<Users />} />
                 <Route path="/settings" element={<Settings />} />
               </Route>
+
+              {/** The Worker owns /auth/freebuff/* whenever one is running. If a
+               * bundle is ever served without it (local dev, or a deployment
+               * whose auth vars are missing), a stale sign-in link must not land
+               * on the not-found page — send it somewhere that exists. */}
+              <Route
+                path="/auth/freebuff/*"
+                element={<Navigate to={DEMO_MODE ? '/dashboard' : '/'} replace />}
+              />
 
               <Route path="/404" element={<NotFound />} />
               <Route path="*" element={<Navigate to="/404" replace />} />

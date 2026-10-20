@@ -4,6 +4,7 @@ import { useFreebuffUser } from '@freebuff/auth/react';
 
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { authReturnQuery } from '../utils/format';
+import { DEMO_MODE, DEMO_USER } from '../utils/demoMode';
 
 const AuthContext = createContext(null);
 
@@ -27,7 +28,18 @@ export function AuthProvider({ children }) {
     };
   }, [freebuffUser]);
 
-  const value = useMemo(() => ({ user, loading: isLoading }), [user, isLoading]);
+  // Plain `vite dev` serves the SPA with no Worker, so /auth/freebuff/session
+  // answers HTML and no session can ever exist — without this the dev server
+  // bounces every protected route back to the landing page. Demo mode runs the
+  // shell signed in as a local identity; `vite build` sets DEV=false, so a
+  // wrangler dev or deployed bundle always keeps the real Worker session.
+  const value = useMemo(
+    () => ({
+      user: DEMO_MODE && !user ? DEMO_USER : user,
+      loading: DEMO_MODE ? false : isLoading,
+    }),
+    [user, isLoading],
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
