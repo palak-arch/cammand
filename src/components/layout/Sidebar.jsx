@@ -49,7 +49,8 @@ export default function Sidebar() {
             <Cloud size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-base font-bold text-navy-900 tracking-tight">CloudOps</h1>
+            {/* Not a heading: the page owns the single <h1> via PageHeader. */}
+            <p className="text-base font-bold text-navy-900 tracking-tight">CloudOps</p>
             <p className="text-xs text-navy-500 font-medium tracking-wide uppercase">Command Center</p>
           </div>
         </div>
