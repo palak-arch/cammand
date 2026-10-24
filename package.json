@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "preview": "vite preview",
-    "tasks": "node scripts/tasks.mjs"
+    "tasks": "node scripts/tasks.mjs",
+    "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {
     "@freebuff/auth": "^0.1.0",

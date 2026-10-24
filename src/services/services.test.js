@@ -30,6 +30,10 @@ describe('instanceService (mock mode)', () => {
     await expect(instanceService.stop('i-1')).resolves.toMatchObject({ success: true });
     await expect(instanceService.restart('i-1')).resolves.toMatchObject({ success: true });
   });
+
+  it('acknowledges a delete request', async () => {
+    await expect(instanceService.remove('i-1')).resolves.toMatchObject({ success: true });
+  });
 });
 
 describe('alertService (mock mode)', () => {

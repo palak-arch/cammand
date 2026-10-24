@@ -27,4 +27,9 @@ export const instanceService = {
     if (useMock) return { success: true, message: 'Instance restarting' };
     return api.post(`/ec2/instances/${id}/restart`);
   },
+
+  async remove(id) {
+    if (useMock) return { success: true, message: 'Instance deleted' };
+    return api.delete(`/ec2/instances/${id}`);
+  },
 };

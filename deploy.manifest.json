@@ -8,6 +8,5 @@
       "path": "./worker.bundle.js"
     }
   ],
-  "assetsDirectory": "./dist",
-  "spa": true
+  "assetsDirectory": "./dist"
 }
