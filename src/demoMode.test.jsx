@@ -29,6 +29,13 @@ vi.mock('@freebuff/auth/react', () => ({
 
 import App from './App';
 
+// Warm the mocked Dashboard module at file load: App lazy-loads it on
+// navigation, and a cold first import races the shared Vite transform queue
+// under full-suite parallelism, which intermittently pushes the probe render
+// past findBy's window (url navigated, probe missing). Once resolved here,
+// the lazy import at click time is a cache hit.
+import './pages/Dashboard';
+
 function renderAt(path) {
   window.history.pushState({}, '', path);
   return render(<App />);
