@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { RefreshCw, Play, Square, RotateCcw } from 'lucide-react';
+import { RefreshCw, Play, Square, RotateCcw, Trash2 } from 'lucide-react';
 import PageHeader from '../components/common/PageHeader';
 import StatusBadge from '../components/common/StatusBadge';
 import SearchInput from '../components/common/SearchInput';
@@ -19,6 +19,7 @@ const instanceActions = [
   { key: 'start', label: 'Start', icon: Play, color: 'text-green-600 hover:bg-green-50' },
   { key: 'stop', label: 'Stop', icon: Square, color: 'text-amber-600 hover:bg-amber-50' },
   { key: 'restart', label: 'Restart', icon: RotateCcw, color: 'text-navy-600 hover:bg-navy-100' },
+  { key: 'delete', label: 'Delete', icon: Trash2, color: 'text-red-600 hover:bg-red-50' },
 ];
 
 export default function Instances() {
@@ -52,19 +53,29 @@ export default function Instances() {
       start: instanceService.start,
       stop: instanceService.stop,
       restart: instanceService.restart,
+      delete: instanceService.remove,
     }[action];
 
     try {
       await serviceAction(instance.id);
-      setInstances((prev) =>
-        prev.map((i) => {
-          if (i.id !== instance.id) return i;
-          if (action === 'start') return { ...i, state: 'running', cpu: Math.floor(Math.random() * 40) + 10 };
-          if (action === 'stop') return { ...i, state: 'stopped', cpu: 0, networkIn: 0, networkOut: 0, memoryUsage: 0 };
-          return { ...i, cpu: Math.floor(Math.random() * 40) + 10 };
-        })
-      );
-      success(`Instance ${action}${action === 'restart' ? 'ed' : 'ed'} successfully`);
+      if (action === 'delete') {
+        // Drop the row outright; closing the details modal if it shows the deleted instance.
+        setInstances((prev) => prev.filter((i) => i.id !== instance.id));
+        if (selectedInstance?.id === instance.id) {
+          setSelectedInstance(null);
+          setDetailsOpen(false);
+        }
+      } else {
+        setInstances((prev) =>
+          prev.map((i) => {
+            if (i.id !== instance.id) return i;
+            if (action === 'start') return { ...i, state: 'running', cpu: Math.floor(Math.random() * 40) + 10 };
+            if (action === 'stop') return { ...i, state: 'stopped', cpu: 0, networkIn: 0, networkOut: 0, memoryUsage: 0 };
+            return { ...i, cpu: Math.floor(Math.random() * 40) + 10 };
+          })
+        );
+      }
+      success(action === 'delete' ? 'Instance deleted successfully' : `Instance ${action}${action === 'restart' ? 'ed' : 'ed'} successfully`);
     } catch (err) {
       showError(err?.message || `Failed to ${action} instance`);
     }
@@ -185,7 +196,7 @@ export default function Instances() {
         title={`${confirmAction?.action?.charAt(0).toUpperCase() + confirmAction?.action?.slice(1)} Instance`}
         message={`Are you sure you want to ${confirmAction?.action} "${confirmAction?.instance?.name}"?`}
         confirmLabel={confirmAction?.action?.charAt(0).toUpperCase() + confirmAction?.action?.slice(1)}
-        confirmVariant={confirmAction?.action === 'stop' ? 'danger' : 'primary'}
+        confirmVariant={['stop', 'delete'].includes(confirmAction?.action) ? 'danger' : 'primary'}
       />
 
       <InstanceDetailsModal instance={selectedInstance} isOpen={detailsOpen} onClose={() => setDetailsOpen(false)} />
