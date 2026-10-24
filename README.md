@@ -142,7 +142,9 @@ environment:
   dashboard, protected routes need no session, Exit demo replaces sign-out
 - `src/App.routes.test.jsx` — stale `/auth/freebuff/*` links land on the
   landing page instead of the not-found page when no Worker is serving
-- `src/pages/*.test.jsx` — page error/retry states
+- `src/pages/*.test.jsx` — page error/retry states, the instance delete
+  flow (confirm/cancel/failure, unit tier) and its end-to-end integration
+  path through the real service and fixtures (integration tier)
 - `src/components/layout/AppLayout.a11y.test.jsx` — one `<h1>` per page and
   the main/navigation landmarks in the app shell
 - `worker.test.js` — SPA deep-link fallback, missing-asset 404s, the

@@ -86,10 +86,18 @@ Do not push directly to `main`.
    `git switch -c feat/<short-slug>` (or `fix/…`, `docs/…`, `chore/…`).
 2. **Scope the change.** One concern per branch. If you need docs + code +
    a dependency, split the dependency into its own PR.
-3. **Implement** with tests:
-   - New service method → add it to mock mode and `services.test.js`.
-   - New page state → cover error/empty/loading in a page test.
-   - UI change → verify at 375px, 768px, 1440px.
+3. **Implement test-first (TDD is mandatory).** RED → GREEN → REFACTOR:
+   - **RED:** write the failing unit test that describes the new behavior
+     first. No production code without a failing test that needs it.
+   - **GREEN:** implement the minimum that makes it pass.
+   - **REFACTOR:** tidy up with the suite green.
+   - Then add the feature's **integration test** (always — see §10):
+     - New service method → unit test in `services.test.js`, plus an
+       integration test that drives it through the real page with nothing
+       mocked away.
+     - New page state → cover error/empty/loading in a page test, plus one
+       full-stack path for the happy case.
+     - UI change → verify at 375px, 768px, 1440px.
 4. **Run the gate locally:** `npm run lint && npm test && npm run build`.
 5. **Commit** in the imperative mood, focused on *why*
    (`Fix sign-in returnTo when the landing page is reloaded`). Do not
@@ -215,6 +223,31 @@ Rules:
 
 ## 10. Testing & QA
 
+### Policy (non-negotiable)
+
+- **Unit tests are mandatory for anything developed.** No production code
+  lands without at least one failing-first unit test covering the behavior
+  it adds.
+- **Integration testing accompanies every change.** Each feature gets at
+  least one test that drives the real modules together — real page, real
+  `useApi`, real service, real fixtures — with **no spies at the service
+  boundary**. Tests that mock the service out (e.g.
+  `Instances.delete.test.jsx`) are unit tests and do not satisfy this.
+- **TDD, always:** RED (failing test) → GREEN (minimal implementation) →
+  REFACTOR (suite stays green). When adding behavior to existing code that
+  has no test, write a characterization test first and confirm it fails
+  when the feature is removed (mutation check) before implementing.
+- **A test must be able to fail.** Verify it goes red at least once against
+  the broken/absent behavior; a test that has never been red proves nothing.
+
+### Test tiers
+
+| Tier | Exercises | Examples | Runs with |
+| --- | --- | --- | --- |
+| Unit | One module, collaborators mocked at the boundary | `services.test.js`, `Instances.delete.test.jsx`, `format.test.js` | `npm test` |
+| Integration | Real modules wired together, no service spies; full Worker handler | `Instances.integration.test.jsx`, `App.routes.test.jsx`, `worker.test.js` | `npm test` |
+| Live smoke | Real HTTP against a running deployment | `scripts/smoke.mjs` | `npm run smoke -- <url>` |
+
 ### Automated (what CI runs)
 
 - `src/services/api.test.js` — interceptor unwrap + error normalisation.
@@ -226,6 +259,10 @@ Rules:
 - `src/pages/Landing.authReturn.test.jsx` — returnTo round trip.
 - `src/pages/Instances.error.test.jsx`, `src/pages/dataPages.errors.test.jsx`
   — error → retry → recovery on each data page.
+- `src/pages/Instances.delete.test.jsx` — confirm/cancel/failure of the
+  delete action (unit tier; service mocked).
+- `src/pages/Instances.integration.test.jsx` — delete driven end-to-end
+  through the real service and fixtures (integration tier; nothing mocked).
 - `src/components/layout/AppLayout.a11y.test.jsx` — one `h1`, landmarks.
 - `worker.test.js` — SPA fallback, security headers, loopback-auth config
   (node environment).
@@ -271,6 +308,7 @@ passed from a build exit code.
 | "Could not reach the server" | API down, CORS, or CSP `connect-src` | Network tab + console CSP report |
 | Fonts blocked after header change | CSP missing fonts origins | `style-src`/`font-src` |
 | Tests fail only in full run | CPU contention / shared mocks restored late | Run the file alone; check `restoreAllMocks` |
+| A lazy-route test fails only in full runs (URL changed, probe missing) | Cold first import of the lazily loaded module races the shared Vite transform queue | Warm the module with a top-level import in the test (see `src/demoMode.test.jsx`); don't inflate the wait |
 
 ## 12. Guardrails
 
@@ -279,6 +317,8 @@ passed from a build exit code.
 - Don't upgrade dependencies or rewrite the lockfile as part of an
   unrelated change.
 - Don't weaken tests, skip checks, or add lint suppressions to make CI pass.
+- Don't ship production code without a failing test written first, and
+  don't skip or mock away a feature's integration test.
 - Don't deploy production, force-push, or rewrite history without explicit
   authorisation.
 - Don't invent facts about the live site; verify the preview.
